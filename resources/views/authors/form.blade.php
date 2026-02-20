@@ -5,8 +5,10 @@
             class="text-red-500">*</span></label>
     <input type="text" id="name" name="name" required
         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-        placeholder="Enter author name" 
-        value="{{ old('name', $author->name ?? '') }}" />
+        placeholder="Enter author name" value="{{ old('name', $author->name ?? '') }}" />
+    @error('name')
+        <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p>
+    @enderror
 </div>
 
 <div>
@@ -14,8 +16,10 @@
             class="text-red-500">*</span></label>
     <input type="email" id="email" name="email" required
         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
-        placeholder="Enter author email" 
-        value="{{ old('email', $author->email ?? '') }}" />
+        placeholder="Enter author email" value="{{ old('email', $author->email ?? '') }}" />
+    @error('email')
+        <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p>
+    @enderror
 </div>
 
 <div>
@@ -23,15 +27,21 @@
     <textarea id="bio" name="bio" rows="4"
         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors resize-none"
         placeholder="Enter author biography">{{ old('bio', $author->bio ?? '') }}</textarea>
+    @error('bio')
+        <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p>
+    @enderror
 </div>
 
 <div>
     <label for="status" class="block text-sm font-medium text-gray-700 mb-2">Status</label>
     <select id="status" name="status"
         class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors">
-        <option value="active" {{ (old('status', $author->status ?? '') == 'active') ? 'selected' : '' }}>Active</option>
-        <option value="inactive" {{ (old('status', $author->status ?? '') == 'inactive') ? 'selected' : '' }}>Inactive</option>
+        <option value="1" {{ (old('status', $author->status ?? '') == '1') ? 'selected' : '' }}>Active</option>
+        <option value="0" {{ (old('status', $author->status ?? '') == '0') ? 'selected' : '' }}>Inactive</option>
     </select>
+    @error('status')
+        <p class="mt-1 text-xs text-red-500 font-medium">{{ $message }}</p>
+    @enderror
 </div>
 
 <div class="flex items-center justify-end space-x-4 pt-4">

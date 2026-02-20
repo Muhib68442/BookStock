@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
@@ -11,7 +13,8 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return view('categories.index');
+        $categories = Category::all();
+        return view('categories.index', compact('categories'));
     }
 
     /**
@@ -27,6 +30,18 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required|min:3|max:30',
+            'description' => 'required|min:3|max:255',
+            'status' => 'required',
+        ]);
+
+        DB::table('categories')->insert([
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $request->status,
+        ]);
+
         return back()->with('success', 'Category created successfully.');
     }
 
@@ -35,7 +50,8 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $category = DB::table('categories')->where('id', $id)->first();
+        return view('categories.show', compact('category'));
     }
 
     /**
@@ -43,13 +59,7 @@ class CategoryController extends Controller
      */
     public function edit(string $id)
     {
-        // For now returning mock data to verify the view
-        $category = (object)[
-            'id' => $id,
-            'name' => 'Fiction',
-            'description' => 'Novels and stories',
-            'status' => 'active'
-        ];
+        $category = DB::table('categories')->where('id', $id)->first();
         return view('categories.edit', compact('category'));
     }
 
@@ -58,7 +68,19 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|min:3|max:30',
+            'description' => 'required|min:3|max:255',
+            'status' => 'required',
+        ]);
+
+        DB::table('categories')->where('id', $id)->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $request->status,
+        ]);
+
+        return back()->with('success', 'Category updated successfully.');
     }
 
     /**
@@ -66,6 +88,7 @@ class CategoryController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        DB::table('categories')->where('id', $id)->delete();
+        return back()->with('success', 'Category deleted successfully.');
     }
 }

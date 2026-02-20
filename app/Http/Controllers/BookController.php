@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Book;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BookController extends Controller
 {
@@ -12,7 +13,8 @@ class BookController extends Controller
      */
     public function index()
     {
-        return view('books.index');
+        $books = DB::table('books')->get();
+        return view('books.index', compact('books'));
     }
 
     /**
@@ -28,7 +30,15 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $request->validate([
+            'title' => 'required|min:3|max:30',
+            'isbn' => 'required|min:3|max:30',
+            'author_id' => 'required',
+            'category_id' => 'required',
+            'description' => 'required|min:3|max:255',
+            'status' => 'required',
+        ]);
+
     }
 
     /**
@@ -44,7 +54,7 @@ class BookController extends Controller
      */
     public function edit(string $id)
     {
-        $book = (object)[
+        $book = (object) [
             'id' => $id,
             'title' => 'Harry Potter',
             'isbn' => '978-0-7475-3269-9',

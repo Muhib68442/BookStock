@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Author;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AuthorController extends Controller
 {
@@ -12,7 +13,8 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        return view('authors.index');
+        $authors = DB::table('authors')->get();
+        return view('authors.index', compact('authors'));
     }
 
     /**
@@ -28,7 +30,21 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|min:3|max:30',
+            'email' => 'required|email',
+            'bio' => 'required|min:3|max:255',
+            'status' => 'required',
+        ]);
+
+        DB::table('authors')->insert([
+            'name' => $request->name,
+            'email' => $request->email,
+            'bio' => $request->bio,
+            'status' => $request->status,
+        ]);
+
+        return back()->with('success', 'Author Added successfully.');
     }
 
     /**
@@ -36,7 +52,8 @@ class AuthorController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $author = DB::table('authors')->where('id', $id)->first();
+        return view('authors.show', compact('author'));
     }
 
     /**
@@ -44,13 +61,7 @@ class AuthorController extends Controller
      */
     public function edit(string $id)
     {
-        $author = (object)[
-            'id' => $id,
-            'name' => 'J.K. Rowling',
-            'email' => 'jk@rowling.com',
-            'bio' => 'Famous author of Harry Potter',
-            'status' => 'active'
-        ];
+        $author = DB::table('authors')->where('id', $id)->first();
         return view('authors.edit', compact('author'));
     }
 
@@ -59,7 +70,21 @@ class AuthorController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|min:3|max:30',
+            'email' => 'required|email',
+            'bio' => 'required|min:3|max:255',
+            'status' => 'required',
+        ]);
+
+        DB::table('authors')->where('id', $id)->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'bio' => $request->bio,
+            'status' => $request->status,
+        ]);
+
+        return back()->with('success', 'Author Updated successfully.');
     }
 
     /**
@@ -67,6 +92,7 @@ class AuthorController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        DB::table('authors')->where('id', $id)->delete();
+        return back()->with('success', 'Author Deleted successfully.');
     }
 }
